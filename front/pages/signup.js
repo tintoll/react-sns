@@ -3,21 +3,22 @@ import AppLayout from "../components/AppLayout";
 import Head from "next/head";
 import { Form, Input, Checkbox, Button } from "antd";
 
+// 커스텀 Hooks
+// 반복되는 input에 change이벤트 내용을 Hooks으로 만듬
+export const useInput = (initValue = null) => {
+  const [value, setter] = useState(initValue);
+  const handler = e => {
+    setter(e.target.value);
+  };
+  return [value, handler];
+};
+
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [term, setTerm] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [termError, setTermError] = useState(false);
-
-  // 커스텀 Hooks
-  // 반복되는 input에 change이벤트 내용을 Hooks으로 만듬
-  const useInput = (initValue = null) => {
-    const [value, setter] = useState(initValue);
-    const handler = e => {
-      setter(e.target.value);
-    };
-    return [value, handler];
-  };
+  
   const [id, onChangeId] = useInput("");
   const [nick, onChangeNick] = useInput("");
   const [password, onChangePassword] = useInput("");
