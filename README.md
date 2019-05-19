@@ -73,5 +73,45 @@ import Head from "next/head";
 
 
 
+#### _app.js 사용 용도
 
+- head태그 같이 공통으로 모든 페이지에 사용되는 요소들이 있다. 이런 공통 요소들을 처리할때 _app.js를 사용한다. 
+
+- pages/_app.js 로 파일을 만들어 공통 요소 컴포넌트를 작성하면 다른 페이지에서는 이부분이 무조건 적용되어 나타나게 된다. 
+
+  ```javascript
+  import React from 'react';
+  import Head from 'next/head';
+  import PropTypes from 'prop-types';
+  import AppLayout from '../components/AppLayout';
+  
+  // 무조건 Component props로 넘어온다. 
+  // 사용시 <Component /> 로 사용해야 합니다. 
+  // eslint 사용시 타입에러가 나기때문에 propTypes를 설정해주어야 한다. 
+  const NodeSNS = ({Component}) => {
+    return (
+      <>
+        <Head>
+          <title>NodeBird</title>
+          <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css"
+          />
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
+        </Head>
+        <AppLayout>
+          <Component />
+        </AppLayout>
+      </>
+    );
+  };
+  
+  NodeSNS.propTypes = {
+    Component : PropTypes.elementType
+  }
+  
+  export default NodeSNS;
+  ```
+
+  
 
