@@ -1,15 +1,8 @@
 import React from 'react';
 import { Avatar, Card } from 'antd';
 
-const dummy = {
-  nickname: '제로초',
-  Post: [],
-  Followings: [],
-  Followers: [],
-  isLoggedIn: false,
-};
 
-const UserProfile = () => {
+const UserProfile = ({dummy}) => {
   return (
     <Card
       actions={[

@@ -1,12 +1,31 @@
 import React from "react";
-import Head from "next/head";
-import AppLayout from "../components/AppLayout";
+import PostCard from '../components/PostCard';
+import PostForm from '../components/PostForm';
+
+const dummy = {
+  isLoggedIn: true,
+  imagePaths: [],
+  mainPosts: [{
+    User: {
+      id: 1,
+      nickname: '제로초',
+    },
+    content: '첫 번째 게시글',
+    img: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
+  }],
+};
+
 
 const Home = () => {
   return (
-   
-    <div>Hello, Next!</div>
-    
+    <div>
+      {dummy.isLoggedIn && <PostForm />}
+      {dummy.mainPosts.map((c) => {
+        return (
+          <PostCard key={c} post={c} />
+        );
+      })}
+    </div>
   );
 };
 
