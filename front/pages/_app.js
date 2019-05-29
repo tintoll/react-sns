@@ -3,6 +3,11 @@ import Head from 'next/head';
 import PropTypes from 'prop-types';
 import AppLayout from '../components/AppLayout';
 
+import { applyMiddleware, compose, createStore } from "redux";
+import { Provider } from "react-redux";
+import withRedux from 'next-redux-wrapper';
+import reducer from '../reducers';
+
 
 const NodeSNS = ({Component}) => {
   return (

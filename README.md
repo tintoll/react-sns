@@ -113,5 +113,34 @@ import Head from "next/head";
   export default NodeSNS;
   ```
 
-  
+
+
+
+#### next에서 Redux 설정
+
+next에서 Redux를 사용하기 위해서는 기존 패키지 외에 추가 패키지가 필요하다.
+
+```javascript
+// 패키지 설치 
+$ npm i redux react-redux next-redux-wrapper
+
+// _app.js
+import { applyMiddleware, compose, createStore } from "redux";
+import { Provider } from "react-redux";
+import withRedux from 'next-redux-wrapper';
+import reducer from '../reducers';
+
+...
+
+// withRedux 함수안에 redux관련 설정을 해줘야 한다. 마지막에 생성된 store를 리턴 시켜줘야한다. 
+export default withRedux((initialState, options) => {
+  const middleware = [];
+  const enhancer = compose(
+    applyMiddleware(...middleware),
+    !options.isServer && window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined' ? window.__REDUX_DEVTOOLS_EXTENSION__() : (f) => f,
+  )
+  const store = createStore(reducer, initialState, enhancer);
+  return store;
+})(NodeSNS);
+```
 
