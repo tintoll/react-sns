@@ -144,3 +144,16 @@ export default withRedux((initialState, options) => {
 })(NodeSNS);
 ```
 
+
+
+#### react-redux hooks 사용
+
+```javascript
+// react-redux -> ^7.1.0-alpha.4 버전부터 hooks를 제공한다. 
+
+// useSelect는 mapStateToProps역할을 useDispatch는 mapDispatchToProps역할을 한다. 
+import { useSelector, useDispatch } from "react-redux";
+const {user} = useSelector(state => state.user);
+const dispatch = useDispatch();
+```
+

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import AppLayout from "../components/AppLayout";
 import Head from "next/head";
 import { Form, Input, Checkbox, Button } from "antd";
+import { useDispatch } from "react-redux";
+import { signUp } from "../reducers/user";
 
 // 커스텀 Hooks
 // 반복되는 input에 change이벤트 내용을 Hooks으로 만듬
@@ -22,8 +24,9 @@ const Signup = () => {
   const [id, onChangeId] = useInput("");
   const [nick, onChangeNick] = useInput("");
   const [password, onChangePassword] = useInput("");
+  const dispatch = useDispatch();
 
-  const onSubmit = e => {
+  const onSubmit = useCallback(e => {
     e.preventDefault();
     if (password !== passwordCheck) {
       return setPasswordError(true);
@@ -31,17 +34,21 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-  };
 
-  const onChangePasswordCheck = e => {
+    dispatch(signUp({
+      id, password, nick
+    }));
+  }, [password, passwordCheck, term]);
+
+  const onChangePasswordCheck = useCallback(e => {
     setPasswordError(e.target.value !== password);
     setPasswordCheck(e.target.value);
-  };
+  }, [password]);
 
-  const onChangeTerm = e => {
+  const onChangeTerm = useCallback(e => {
     setTermError(false);
     setTerm(e.target.checked);
-  };
+  },[]);
 
   return (
     

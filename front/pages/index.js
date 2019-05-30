@@ -1,26 +1,17 @@
 import React from "react";
 import PostCard from '../components/PostCard';
 import PostForm from '../components/PostForm';
-
-const dummy = {
-  isLoggedIn: true,
-  imagePaths: [],
-  mainPosts: [{
-    User: {
-      id: 1,
-      nickname: '제로초',
-    },
-    content: '첫 번째 게시글',
-    img: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-  }],
-};
-
+import { useSelector } from "react-redux";
 
 const Home = () => {
+  // hooks를 이용하여 props데이터 가져오기 
+  // mapStateToProps를  대체 하는게 useSelector이다. 
+  const { isLoggedIn } = useSelector(state => state.user);
+  const { mainPosts } = useSelector(state => state.post);
   return (
     <div>
-      {dummy.isLoggedIn && <PostForm />}
-      {dummy.mainPosts.map((c) => {
+      {isLoggedIn && <PostForm />}
+      {mainPosts.map((c) => {
         return (
           <PostCard key={c} post={c} />
         );

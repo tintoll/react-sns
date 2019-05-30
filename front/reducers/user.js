@@ -41,13 +41,13 @@ export const loginAction = (data) => {
     data
   }
 }
-export const logoutAction = (data) => {
+export const logoutAction = () => {
   return {
     type: LOG_OUT,
   }
 }
 // 리듀서 
-export default (sate=initialState, action) => {
+export default (state=initialState, action) => {
   switch (action.type) {
     case LOGIN_IN:
       return {
@@ -56,7 +56,7 @@ export default (sate=initialState, action) => {
         user: dummyUser,
         loginData : action.data
       };
-    case LOGIN_OUT:
+    case LOG_OUT:
       return {
         ...state,
         isLoggedIn: false,
@@ -68,6 +68,8 @@ export default (sate=initialState, action) => {
         signUpData: action.data
       };  
     default:
-      return Object.assign({}, state);
+      return {
+        ...state
+      };
   }
 }

@@ -2,15 +2,18 @@ import React, { useCallback} from 'react'
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
 import { useInput } from '../pages/signup'; // TODO: util 폴더로 옮기기
+import { useDispatch } from "react-redux";
+import { loginAction } from "../reducers/user";
 
 const LoginForm = () => {
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
+  const dispatch = useDispatch();
+
+
   const onSubmitForm = useCallback((e) => {
     e.preventDefault();
-    console.log({
-      id, password,
-    });
+    dispatch(loginAction({id,password}));
   }, [id, password]);
   // antd에서는 Button의 type을 htmlType="submit"로 정의해야 한다. type은 생삭용도로 사용한다.
   return (
