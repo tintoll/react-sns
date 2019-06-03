@@ -157,3 +157,64 @@ const {user} = useSelector(state => state.user);
 const dispatch = useDispatch();
 ```
 
+
+
+
+
+## redux-saga 적용
+
+
+
+1. rootSaga 생성 
+
+```javascript
+// sagas/index.js
+import { all, fork } from 'redux-saga/effects';
+import user from './user';
+import post from './post';
+
+// 비동기 처리들도 리듀서 같이 관련 작업끼리 파일을 만들고 
+// index.js에서 이부분을 묶어주는 방식으로 관리하면 된다. 
+export default function* rootSaga() {
+  yield all([
+    forl(user),
+    fork(post),
+  ]);
+}
+
+// sagas/user.js
+import { all , fork } from "redux-saga/effects";
+export default function* userSaga() {
+  yield all([
+  ]);
+}
+
+// sagas/post.js
+import { all, fork } from "redux-saga/effects";
+export default function* postSaga() {
+  yield all([
+  ]);
+};
+```
+
+2. next에서 saga 미들웨어 적용
+
+```javascript
+// pages/_app.js
+
+export default withRedux((initialState, options) => {
+  // 1.미들웨어 생성
+  const sagaMiddleware = createSagaMiddleware();
+  
+  const middlewares = [sagaMiddleware];
+  // 2.리덕스 store에 미들웨어 적용 
+  const enhancer = compose(
+    applyMiddleware(...middlewares));
+  const store = createStore(reducer, initialState, enhancer);
+  
+  // 3.rootSaga 실행
+  sagaMiddleware.run(rootSaga);
+  return store;
+})(NodeBird);
+```
+
