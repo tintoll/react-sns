@@ -218,3 +218,136 @@ export default withRedux((initialState, options) => {
 })(NodeBird);
 ```
 
+
+
+#### reducer Action 정의 
+
+비동기 관련 해서 액션을 정의할때 3가지를 기본으로 정의 할수 있겠다.
+
+request, success, failure
+
+```javascript
+// 회원가입
+export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+// 로그인
+export const LOGIN_IN_REQUEST = 'LOGIN_IN_REQUEST';
+export const LOGIN_IN_SUCCESS = 'LOGIN_IN_SUCCESS';
+export const LOGIN_IN_FAILURE = 'LOGIN_IN_FAILURE';
+
+export default (state=initialState, action) => {
+  switch (action.type) {
+    case LOG_IN_REQUEST: {
+      return {
+        ...state,
+        isLoggingIn: true,
+        logInErrorReason: '',
+      };
+    }
+    case LOG_IN_SUCCESS: {
+      return {
+        ...state,
+        isLoggingIn: false,
+        isLoggedIn: true,
+        me: dummyUser,
+        isLoading: false,
+      };
+    }
+    case LOG_IN_FAILURE: {
+      return {
+        ...state,
+        isLoggingIn: false,
+        isLoggedIn: false,
+        logInErrorReason: action.error,
+        me: null,
+      };
+    }
+    case LOG_OUT_REQUEST: {
+      return {
+        ...state,
+        isLoggedIn: false,
+        me: null,
+      };
+    }
+    case SIGN_UP_REQUEST: {
+      return {
+        ...state,
+        isSigningUp: true,
+        isSignedUp: false,
+        signUpErrorReason: '',
+      };
+    }
+    case SIGN_UP_SUCCESS: {
+      return {
+        ...state,
+        isSigningUp: false,
+        isSignedUp: true,
+      };
+    }
+    case SIGN_UP_FAILURE: {
+      return {
+        ...state,
+        isSigningUp: false,
+        signUpErrorReason: action.error,
+      };
+    }  
+    default:
+      return {
+        ...state
+      };
+  }
+}
+```
+
+
+
+
+
+#### saga 생성 패턴
+
+```javascript
+import { all , fork, takeLatest, takeEvery, call, put, take, delay } from "redux-saga/effects";
+import axios from "axios";
+import { SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE } from "../reducers/user";
+
+// 1. API 요청하는 함수 
+function signUpAPI() {
+  return axios.post('/login');
+}
+// 2.실제 saga 로직
+function* signUp() {
+  try {
+    // API 호출 
+    yield call(signUpAPI);
+   
+    // 성공 했을때 액션을 실행 
+    yield put({
+      type: SIGN_UP_SUCCESS,
+    });
+
+  } catch(e) {
+    console.error(e);
+    // put은 액션을 dispatch하는 것과 동일하다.
+    // SIGN_UP_FAILURE액셜을 실행한다. 
+    yield put({
+      type:SIGN_UP_FAILURE,
+      error : e
+    })
+    
+  }
+}
+// 3. signUp Action을 대기 하는 함수 
+function* watchSignUp() {
+  // SIGN_UP_REQUEST액션이 들어오면 signUp함수를 실행 시켜줍니다.
+  yield takeEvery(SIGN_UP_REQUEST, signUp);
+}
+
+export default function* userSaga() {
+  // 비동기 호출 
+  yield all([
+    fork(watchSignUp),
+  ]);
+}
+```
+
