@@ -84,14 +84,14 @@ export const logoutAction = () => {
 // 리듀서 
 export default (state=initialState, action) => {
   switch (action.type) {
-    case LOG_IN_REQUEST: {
+    case LOGIN_IN_REQUEST: {
       return {
         ...state,
         isLoggingIn: true,
         logInErrorReason: '',
       };
     }
-    case LOG_IN_SUCCESS: {
+    case LOGIN_IN_SUCCESS: {
       return {
         ...state,
         isLoggingIn: false,
@@ -100,7 +100,7 @@ export default (state=initialState, action) => {
         isLoading: false,
       };
     }
-    case LOG_IN_FAILURE: {
+    case LOGIN_IN_FAILURE: {
       return {
         ...state,
         isLoggingIn: false,

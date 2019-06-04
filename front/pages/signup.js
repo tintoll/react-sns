@@ -1,17 +1,16 @@
-import React, { useState, useCallback } from "react";
-import AppLayout from "../components/AppLayout";
-import Head from "next/head";
+import React, { useState, useCallback, useEffect } from "react";
 import { Form, Input, Checkbox, Button } from "antd";
-import { useDispatch } from "react-redux";
-import { signUp } from "../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
+import { SIGN_UP_REQUEST } from "../reducers/user";
+import Router from "next/router";
 
 // 커스텀 Hooks
 // 반복되는 input에 change이벤트 내용을 Hooks으로 만듬
 export const useInput = (initValue = null) => {
   const [value, setter] = useState(initValue);
-  const handler = e => {
+  const handler = useCallback(e => {
     setter(e.target.value);
-  };
+  },[]);
   return [value, handler];
 };
 
@@ -25,6 +24,15 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput("");
   const [password, onChangePassword] = useInput("");
   const dispatch = useDispatch();
+  const { isSigningUp, me} = useSelector(state => state.user);
+
+  // me 데이터가 있으면 로그인이 되었다는 것이기때문에 메인화면으로 이동
+  useEffect( () => {
+    if(me) {
+      alert('로그인했으니 메인페이지로 이동합니다.');
+      Router.push('/');
+    }
+  }, [me && me.id]);
 
   const onSubmit = useCallback(e => {
     e.preventDefault();
@@ -35,9 +43,14 @@ const Signup = () => {
       return setTermError(true);
     }
 
-    dispatch(signUp({
-      id, password, nick
-    }));
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: {
+        id,
+        password,
+        nick,
+      },
+    });
   }, [password, passwordCheck, term]);
 
   const onChangePasswordCheck = useCallback(e => {
@@ -102,7 +115,7 @@ const Signup = () => {
         )}
       </div>
       <div style={{ marginTop: 10 }}>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={isSigningUp}>
           가입하기
         </Button>
       </div>

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import { Card, Icon, Button, Avatar} from 'antd';
 import PropTypes from 'prop-types';
+import { ADD_COMMENT_REQUEST } from "../reducers/post";
 
 const PostCard = ({post}) => {
   return (

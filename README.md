@@ -177,7 +177,7 @@ import post from './post';
 // index.js에서 이부분을 묶어주는 방식으로 관리하면 된다. 
 export default function* rootSaga() {
   yield all([
-    forl(user),
+    fork(user),
     fork(post),
   ]);
 }
