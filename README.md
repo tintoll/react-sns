@@ -115,6 +115,25 @@ import Head from "next/head";
 
 
 
+## Redux
+
+#### Redux 용어
+
+Action : state를 바꾸는 행동
+
+Dispatch : Action을 실행
+
+Reducer : Action의 결과로 state를 어떻게 바꿀지를 정의
+
+
+
+#### React state사용하는 경우
+
+input과 같은 Form관련 태그들에 대한 state들은 react의 state를 사용하는게 더 낫다. 
+
+input값이 변경될때마다 매번 액션을 호출하는 행위는 불편하다. 그래서 react state를 사용하다가 값을 저장할때만 redux state에 넣어주는 방식을 사용한다.
+
+
 
 #### next에서 Redux 설정
 
@@ -350,4 +369,6 @@ export default function* userSaga() {
   ]);
 }
 ```
+
+
 
