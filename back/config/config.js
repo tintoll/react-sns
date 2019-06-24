@@ -1,26 +1,26 @@
-{
+const dotenv = require('dotenv');
+
+dotenv.config();
+module.exports = {
   "development": {
-    "username": "root",
-    "password": "reactsns",
+    "username": "reactsns",
+    "password": "reactsns1@",
     "database": "react_sns",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "operatorsAliases": false
   },
   "test": {
-    "username": "root",
-    "password": "reactsns",
+    "username": "reactsns",
+    "password": "reactsns1@",
     "database": "react_sns",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "operatorsAliases": false
   },
   "production": {
-    "username": "root",
-    "password": "reactsns",
+    "username": "reactsns",
+    "password": "reactsns1@",
     "database": "react_sns",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "operatorsAliases": false
   }
 }

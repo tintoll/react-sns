@@ -372,3 +372,123 @@ export default function* userSaga() {
 
 
 
+## 백엔드
+
+#### 백엔드 관련 패키지 설치 
+
+```shell
+# 보안관련
+npm i helmet hpp
+# 로그 
+npm i morgan
+# 로그인 관리
+npm i passport passport-local
+# DB ORM(sql문이랑 자바스크립트랑 연결해주는 것)
+npm i secuelize sequelize-cli
+
+npm i -D eslint eslint-config-airbnb
+npm i -D eslint-plugin-jsx-a11y
+# 서버 자동 재시작
+npm i -D nodemon
+
+
+# 파일 구성 만들어줌.
+sequelize init
+```
+
+
+#### sequlize 설정
+
+```javascript
+// config/config.js
+const dotenv = require('dotenv');
+
+dotenv.config();
+module.exports = {
+  "development": {
+    "username": "reactsns",
+    "password": "reactsns1@",
+    "database": "react_sns",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+  },
+  "test": {
+    "username": "reactsns",
+    "password": "reactsns1@",
+    "database": "react_sns",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+  },
+  "production": {
+    "username": "reactsns",
+    "password": "reactsns1@",
+    "database": "react_sns",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+  }
+}
+
+// models/index.js
+const Sequelize = require('sequelize');
+const env = process.env.NODE_ENV || 'development';
+const config = require('../config/config')[env];
+const db = {};
+
+const sequelize = new Sequelize(config.database, config.username, config.password, config);
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+db.Commont = require('./comment')(sequelize, Sequelize);
+db.Hashtag = require('./hashtag')(sequelize, Sequelize);
+db.Image = require('./image')(sequelize, Sequelize);
+db.Post = require('./post')(sequelize, Sequelize);
+db.User = require('./user')(sequelize, Sequelize);
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
+module.exports = db;
+
+
+// models/user.js
+module.exports = (sequelize, DataTypes) => {
+  const User = sequelize.define('User', { // 테이블명은 users
+    nickname : {
+      type : DataTypes.STRING(20), // 20글자 이하
+      allowNull : false,  // 필수 
+    },
+    userId : {
+      type : DataTypes.STRING(20),
+      allowNull : false,
+      unique : true, // 고유한 값
+    },
+    password : {
+      type : DataTypes.STRING(100),
+      allowNull : false,
+    },
+  }, {
+    charset : 'utf8',
+    collate : 'utf8_general_ci', // 한글이 저장되게 하기 위해서 
+    // tableName : 'posts', // 테이블명을 변경해줄수도 있다.
+  });
+
+  User.associate = (db) => {
+    db.User.hasMany(db.Post , { as : 'Post'});
+    db.User.hasMany(db.Comment);
+    db.User.belongsToMany(db.Post, { through : 'Like', as : 'Liked' });
+    db.User.belongsToMany(db.User, { through : 'Follow' , as : 'Followers'}); 
+    db.User.belongsToMany(db.User, { through : 'Follow' , as : 'Followings'}); 
+  };
+
+  return User;
+};
+
+
+// index.js
+const db = require('./models');
+```
+
+
+

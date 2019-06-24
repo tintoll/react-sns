@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     charset : 'utf8',
-    collate : 'utf-_general_ci', // 한글이 저장되게 하기 위해서 
+    collate : 'utf8_general_ci', // 한글이 저장되게 하기 위해서 
     // tableName : 'posts', // 테이블명을 변경해줄수도 있다.
   });
 
