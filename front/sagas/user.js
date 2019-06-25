@@ -2,26 +2,26 @@ import { all , fork, takeLatest, takeEvery, call, put, take, delay } from "redux
 import axios from "axios";
 import { SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, LOGIN_IN_SUCCESS, LOGIN_IN_FAILURE, LOGIN_IN_REQUEST } from "../reducers/user";
 
+// 설정을 해놓으면 어느곳에서든 axios를 사용하면 기본 URL이 붙어서 호출이 된다. 
+axios.defaults.baseURL = 'http://localhost:3065/api';
+
+
 // saga 생성 패턴을 이용해서 작성할수 있다.
 // API 요청하는 함수 
-function signUpAPI() {
-  return axios.post('/login');
+function signUpAPI(signUpData) {
+  return axios.post('/user', signUpData);
 }
 // 실제 saga 로직
-function* signUp() {
+function* signUp(action) {
   try {
     // API 호출 
-    // yield call(signUpAPI);
-    yield delay(2000);
-    // throw new Error('에러');
-
+    yield call(signUpAPI, action.data);
     // 성공 했을때 액션을 실행 
     yield put({
       type: SIGN_UP_SUCCESS,
     });
 
   } catch(e) {
-    console.error(e);
     // put은 액션을 dispatch하는 것과 동일하다.
     // SIGN_UP_FAILURE액셜을 실행한다. 
     yield put({
@@ -40,19 +40,20 @@ function* watchSignUp() {
 
 
 /////// 로그인 ///////////
-function loginAPI() {
+function loginAPI(loginData) {
   // 서버에 요청을 보내는 부분
-  return axios.post('/login');
+  return axios.post('/user/login', loginData, {
+    withCredentials : true, // 이 부분을 해줘야 프론트에서 쿠키에 저장이 된다.
+  });
 }
-function* login() {
+function* login(action) {
   try {
-    // yield call(loginAPI);
-    yield delay(2000);
+    const result = yield call(loginAPI, action.data);
     yield put({ // put은 dispatch 동일
       type: LOGIN_IN_SUCCESS,
+      data : result.data
     });
   } catch (e) { // loginAPI 실패
-    console.error(e);
     yield put({
       type: LOGIN_IN_FAILURE,
     });
