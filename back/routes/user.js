@@ -5,7 +5,15 @@ const db = require('../models');
 
 const router = express.Router();
 
-router.get('/', async (req, res) => { // /api/user/
+router.get('/', (req, res) => { // /api/user/
+  if(!req.user) {
+    return res.status(401).send('로그인이 필요합니다.');
+  }
+
+  const user = Object.assign({}, req.user);
+  delete user.password;
+
+  return res.json(user);
 });
 router.post('/', async (req, res, next) => { // POST /api/user 회원가입
   try {
@@ -56,11 +64,6 @@ router.post('/login', (req, res, next) => { // POST /api/user/login
 
     return req.login( user, async (loginError) => {
       
-
-      // 패스워드를 삭제하여 주기 위하여 
-      // const filteredUser = Object.assign({}, user.toJSON()); // toJSON()해주는 이유는 user객체는 sequelize에서 보내준 객체여서 json바꿔줘야한다.
-      // delete filteredUser.password;
-
       try {
         if(loginError) {
           next(loginError);
@@ -69,7 +72,6 @@ router.post('/login', (req, res, next) => { // POST /api/user/login
           where : {
             id : user.id
           },
-          /*
           // user객체에 post 정보 넣어주기 위해서 
           include : [{
             model : db.Post,
@@ -84,7 +86,6 @@ router.post('/login', (req, res, next) => { // POST /api/user/login
             as : 'Followers',
             attributes : ['id'], 
           }],
-          */
           attributes : ['id', 'nickname', 'userId']
         });
 

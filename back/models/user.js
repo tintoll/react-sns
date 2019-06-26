@@ -20,11 +20,13 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   User.associate = (db) => {
-    db.User.hasMany(db.Post , { as : 'Post'});
+    db.User.hasMany(db.Post , { as : 'Posts'});
     db.User.hasMany(db.Comment);
     db.User.belongsToMany(db.Post, { through : 'Like', as : 'Liked' });
-    db.User.belongsToMany(db.User, { through : 'Follow' , as : 'Followers'}); 
-    db.User.belongsToMany(db.User, { through : 'Follow' , as : 'Followings'}); 
+
+    // 같은 테이블을 belongsToMany할려면 foreignKey를 적어줘야한다.
+    db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followers', foreignKey: 'followingId' });
+    db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followings', foreignKey: 'followerId' });
   };
 
   return User;

@@ -1,6 +1,12 @@
 import { all , fork, takeLatest, takeEvery, call, put, take, delay } from "redux-saga/effects";
 import axios from "axios";
-import { SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, LOGIN_IN_SUCCESS, LOGIN_IN_FAILURE, LOGIN_IN_REQUEST } from "../reducers/user";
+import 
+{ 
+  SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
+  LOGIN_IN_SUCCESS, LOGIN_IN_FAILURE, LOGIN_IN_REQUEST,
+  LOG_OUT_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST,
+  LOAD_USER_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST,
+} from "../reducers/user";
 
 // 설정을 해놓으면 어느곳에서든 axios를 사용하면 기본 URL이 붙어서 호출이 된다. 
 axios.defaults.baseURL = 'http://localhost:3065/api';
@@ -63,9 +69,60 @@ function* watchLogin() {
   yield takeEvery(LOGIN_IN_REQUEST, login);
 }
 
+
+
+///  로그 아웃 
+function logoutAPI() {
+  return axios.post('/user/logout', {}, {
+    withCredentials : true, 
+  });
+}
+function* logout() {
+  try {
+    yield call(logoutAPI);
+    yield put({ 
+      type: LOG_OUT_SUCCESS,
+    });
+  } catch (e) { 
+    yield put({
+      type: LOG_OUT_FAILURE,
+    });
+  }
+}
+function* watchLogout() {
+  yield takeEvery(LOG_OUT_REQUEST, logout);
+}
+
+
+/// 유저정보가지오기
+function loadUserAPI() {
+  // get은 데이터 부분이 필요없어서 2번째인자에 옵션이 들어간다.
+  return axios.get('/user', {
+    withCredentials : true, 
+  });
+}
+function* loadUser() {
+  try {
+    const result = yield call(loadUserAPI);
+    yield put({ 
+      type: LOAD_USER_SUCCESS,
+      data : result.data
+    });
+  } catch (e) { 
+    yield put({
+      type: LOAD_USER_FAILURE,
+    });
+  }
+}
+function* watchLoadUser() {
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchSignUp),
-    fork(watchLogin)
+    fork(watchLogin),
+    fork(watchLogout),
+    fork(watchLoadUser),
   ]);
 }
