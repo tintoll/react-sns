@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Icon, Button, Avatar, Form, Input, List, Comment } from "antd";
 import PropTypes from "prop-types";
+import Link from 'next/link';
 import { ADD_COMMENT_REQUEST } from "../reducers/post";
 
 const PostCard = ({ post }) => {
@@ -55,7 +56,21 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={(
+            <div>
+              { 
+                // /(#[^\s]+)/g는 해시태를 포함한 배열을 만들어준다. 
+                post.content.split(/(#[^\s]+)/g).map( v => {
+                  // 해시태그이면 링크로 변경해준다.
+                  if(v.match(/#[^\s]+/)) {
+                    return (
+                      <Link href="/hashtag" key={v}><a>{v}</a></Link>
+                    );
+                  }
+                return v;
+              })}
+            </div>
+          )}
         />
       </Card>
       {commentFormOpend && (

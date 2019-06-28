@@ -19,13 +19,16 @@ const PostForm = () => {
   }, []);
   const onSubmitForm = useCallback((e) => {
     e.preventDefault();
+    if(!text || !text.trim()) {
+      return alert('게시글 내용을 입력하여 주세요');  // return 안하면 아래가 실행됨.
+    }
     dispatch({
       type : ADD_POST_REQUEST,
       data : {
-        text,
+        content : text.trim(),
       }
     });
-  }, []);
+  }, [text]);
 
   return (
     <Form style={{ margin: '10px 0 20px' }} 
