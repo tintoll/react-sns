@@ -31,6 +31,15 @@ app.prepare().then(() => {
     },
   }));
 
+  // /hashtag/태그 요청을 express 에서 받아서 next로 넘겨준다. 
+  server.get('/hashtag/:tag', (req, res) =>{
+    return app.render(req, res, '/hashtag', { tag : req.params.tag});
+  });
+  // /user/id 요청을 express 에서 받아서 next로 넘겨준다. 
+  server.get('/user/:id', (req, res) =>{
+    return app.render(req, res, '/user', {id : req.params.id})
+  });
+
   server.get('*', (req, res) => {
     return handle(req, res);
   });

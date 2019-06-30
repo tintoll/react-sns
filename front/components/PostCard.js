@@ -64,7 +64,10 @@ const PostCard = ({ post }) => {
                   // 해시태그이면 링크로 변경해준다.
                   if(v.match(/#[^\s]+/)) {
                     return (
-                      <Link href="/hashtag" key={v}><a>{v}</a></Link>
+                      <Link 
+                        href={{ pathname : '/hashtag', query : {tag : v.slice(1)} }} 
+                        as={`/hashtag/${v.slice(1)}`}
+                        key={v}><a>{v}</a></Link>
                     );
                   }
                 return v;
@@ -112,8 +115,7 @@ PostCard.propTypes = {
     User: PropTypes.object,
     content: PropTypes.string,
     img: PropTypes.string,
-    createdAt: PropTypes.object
-  })
+  }).isRequired,
 };
 
 export default PostCard;

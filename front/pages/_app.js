@@ -10,7 +10,8 @@ import reducer from '../reducers';
 import createSagaMiddleware from "redux-saga";
 import rootSaga from "../sagas";
 
-const NodeBird = ({ Component, store }) => {
+// 컴포넌트의 pageProps를 사용할려면 props에 pageProps가져와서 넣어줘야한다. 
+const NodeBird = ({ Component, store, pageProps }) => {
   return (
     <Provider store={store}>
       <Head>
@@ -19,7 +20,7 @@ const NodeBird = ({ Component, store }) => {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
       </Head>
       <AppLayout>
-        <Component />
+        <Component {...pageProps} />
       </AppLayout>
     </Provider>
   );
@@ -28,7 +29,19 @@ const NodeBird = ({ Component, store }) => {
 NodeBird.propTypes = {
   Component: PropTypes.elementType,
   store: PropTypes.object,
+  pageProps : PropTypes.object.isRequired
 };
+
+// next 라이프 사이클에서 제일 먼저 시작된다. 
+NodeBird.getInitialProps = async (context) => {
+  console.log(context);
+  const {ctx, Component } = context;
+  let pageProps = {};
+  if(Component.getInitialProps) {
+    pageProps = await Component.getInitialProps(ctx);
+  }
+  return { pageProps };
+}
 
 export default withRedux((initialState, options) => {
   const sagaMiddleware = createSagaMiddleware();
