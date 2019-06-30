@@ -41,7 +41,41 @@ router.post('/', async (req, res, next) => { // POST /api/user 회원가입
   }
 });
 
-router.get('/:id', (req, res) => { // 남의 정보 가져오는 것 ex) /api/user/123
+router.get('/:id', async (req, res, next) => { // 남의 정보 가져오는 것 ex) /api/user/123
+  try {
+    const user = await db.User.findOne({
+      where : {
+        id : parseInt(req.params.id, 10)
+      },
+      include : [{
+        model : db.Post,
+        as : 'Posts',
+        attributes : ['id']
+      },{
+        model : db.User,
+        as : 'Followings',
+        attributes : ['id']
+      },{
+        model : db.User,
+        as : 'Followers',
+        attributes : ['id']
+      }],
+      attributes : ['id', 'nickname']
+    });
+
+    // 정보를 다 보내주면 보안에 위험이 있어서 카운트만 보내줌.
+    const jsonUser = user.toJSON();
+    jsonUser.Posts = jsonUser.Posts ? jsonUser.Posts.length : 0;
+    jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
+    jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
+    res.json(jsonUser);
+
+
+  } catch(e) {
+    console.error(e);
+    next(e);
+  }
+
 });
 
 router.post('/logout', (req, res) => { // /api/user/logout
@@ -111,7 +145,25 @@ router.delete('/:id/follow', (req, res) => {
 router.delete('/:id/follower', (req, res) => {
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', async (req, res, next) => {
+
+  try {
+    const posts = await db.Post.findAll({
+      where: {
+        UserId: parseInt(req.params.id, 10),
+        RetweetId: null,
+      },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname'],
+      }],
+    });
+    res.json(posts);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+
 });
 
 module.exports = router;

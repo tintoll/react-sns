@@ -95,18 +95,19 @@ function* watchLogout() {
 
 
 /// 유저정보가지오기
-function loadUserAPI() {
+function loadUserAPI(userId) {
   // get은 데이터 부분이 필요없어서 2번째인자에 옵션이 들어간다.
-  return axios.get('/user', {
+  return axios.get(userId ? `/user/${userId}`: '/user', {
     withCredentials : true, 
   });
 }
-function* loadUser() {
+function* loadUser(action) {
   try {
-    const result = yield call(loadUserAPI);
+    const result = yield call(loadUserAPI, action.data);
     yield put({ 
       type: LOAD_USER_SUCCESS,
-      data : result.data
+      data : result.data,
+      me : !action.data
     });
   } catch (e) { 
     yield put({
