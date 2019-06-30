@@ -112,7 +112,7 @@ export default (state=initialState, action) => {
     case ADD_COMMENT_SUCCESS: {
       const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments];
+      const Comments = [...post.Comments, action.data.comment];
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = { ...post, Comments };
       return {
@@ -127,6 +127,19 @@ export default (state=initialState, action) => {
         ...state,
         isAddingComment: false,
         addCommentErrorReason: action.error,
+      };
+    }
+
+    case LOAD_COMMENTS_SUCCESS: {
+      // 댓글 데이터를 가져올때 포스트정보를 가져온다음 그곳안에 comment 정보를 넣어줘야한다.
+      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+      const post = state.mainPosts[postIndex];
+      const Comments = action.data.comments;
+      const mainPosts = [...state.mainPosts];
+      mainPosts[postIndex] = { ...post, Comments };
+      return {
+        ...state,
+        mainPosts,
       };
     }
 

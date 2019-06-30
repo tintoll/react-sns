@@ -3,10 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Card, Icon, Button, Avatar, Form, Input, List, Comment } from "antd";
 import PropTypes from "prop-types";
 import Link from 'next/link';
-import { ADD_COMMENT_REQUEST } from "../reducers/post";
+import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST } from "../reducers/post";
 
 const PostCard = ({ post }) => {
-  const [commentFormOpend, setCommentFormOpened] = useState(false);
+  const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [commentText, setCommentText] = useState("");
   const { me } = useSelector(state => state.user);
   const { commentAdded, isAddingComment } = useSelector(state => state.post);
@@ -14,6 +14,13 @@ const PostCard = ({ post }) => {
 
   const onToggleComment = useCallback(() => {
     setCommentFormOpened(prev => !prev);
+    // 댓글 창을 열면서 데이터를 가져옵니다. 
+    if (!commentFormOpened) {
+      dispatch({
+        type: LOAD_COMMENTS_REQUEST,
+        data: post.id,
+      });
+    }
   }, []);
 
   const onSubmitComment = useCallback(
@@ -25,11 +32,12 @@ const PostCard = ({ post }) => {
       return dispatch({
         type: ADD_COMMENT_REQUEST,
         data: {
-          postId: post.id
+          postId: post.id,
+          content: commentText,
         }
       });
     },
-    [me && me.id]
+    [me && me.id, commentText]
   );
 
   useEffect(() => {
@@ -83,7 +91,7 @@ const PostCard = ({ post }) => {
           )}
         />
       </Card>
-      {commentFormOpend && (
+      {commentFormOpened && (
         <>
           <Form onSubmit={onSubmitComment}>
             <Form.Item>
