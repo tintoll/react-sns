@@ -21,6 +21,8 @@ db.sequelize.sync();
 passportConfig();
 
 app.use(morgan('dev'));
+// uploads폴더를 / 주소로 인식하게 하여줌. 
+app.use('/', express.static('uploads'));
 // json 처리 
 app.use(express.json());
 // form 관련 처리 

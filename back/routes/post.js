@@ -1,8 +1,37 @@
 const express = require('express');
 const db = require('../models');
 const { isLoggedIn } = require('./middleware');
+const multer = require('multer');
+const path = require('path');
 
 const router = express.Router();
+
+// multer 설정
+const upload = multer({
+  storage : multer.diskStorage({
+    destination(req, file, done) {
+      done(null, 'uploads');
+    },
+    filename(req, file, done) {
+      // 제로초.png  ext === .png, basename=== 제로초
+      const ext = path.extname(file.originalname);
+      const basename = path.basename(file.originalname, ext);  
+      done(null, basename+new Date().valueOf() + ext);
+    }
+  }),
+  limits : { fileSize : 20*1024*1024},
+});
+
+// 멀터 적용 router
+/*
+  upload.array()
+  upload.none()
+  upload.field()
+*/
+router.post('/images', upload.array('image'),(req, res) => {
+  console.log(req.files);
+  return res.json(req.files.map( v => v.filename));
+})
 
 router.post('/', async (req, res, next) => { // POST /api/post
   try {
