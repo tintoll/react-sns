@@ -23,13 +23,18 @@ const PostForm = () => {
     if(!text || !text.trim()) {
       return alert('게시글 내용을 입력하여 주세요');  // return 안하면 아래가 실행됨.
     }
+
+    const formData = new FormData();
+    imagePaths.forEach( (i) => {
+      formData.append('image',i);
+    });
+    formData.append('content', text.trim());
+
     dispatch({
       type : ADD_POST_REQUEST,
-      data : {
-        content : text.trim(),
-      }
+      data: formData
     });
-  }, [text]);
+  }, [text, imagePaths]);
 
   const onChangeImages = useCallback( (e) => {
     console.log(e.target.files);

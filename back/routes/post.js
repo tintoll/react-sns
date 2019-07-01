@@ -33,7 +33,7 @@ router.post('/images', upload.array('image'),(req, res) => {
   return res.json(req.files.map( v => v.filename));
 })
 
-router.post('/', async (req, res, next) => { // POST /api/post
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST /api/post
   try {
     // 해시태그들을 파싱하여 가져온다. 
     const hashtags = req.body.content.match(/#[^\s]+/g);
@@ -51,6 +51,21 @@ router.post('/', async (req, res, next) => { // POST /api/post
       console.log(result);
       await newPost.addHashtags(result.map( r => r[0]));
     }
+    // 이미지 처리 
+    if (req.body.image) { // 이미지 주소를 여러개 올리면 image: [주소1, 주소2]
+      if(Array.isArray(req.body.image)) {
+        const images = await Promise.all(req.body.image.map((image) => {
+          return db.Image.create({ src: image});
+        }));
+        // 이미지 생성후 Post랑 연결시켜줌
+        await newPost.addImages(images);
+      } else { // 이미지를 하나만 올리면 image: 주소1
+        const image = await db.Image.create({src : req.body.image});
+        await newPost.addImage(image);
+      }
+    }
+
+
     /*
     const User = await newPost.getUser();
     newPost.User = User;
@@ -60,6 +75,8 @@ router.post('/', async (req, res, next) => { // POST /api/post
       where : { id : newPost.id},
       include : [{
         model : db.User
+      },{
+        model : db.Image
       }]
     })
 
