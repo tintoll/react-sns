@@ -11,7 +11,12 @@ router.get('/', async (req, res, next) => { // GET /api/posts
         attributes: ['id', 'nickname'],
       },{
           model: db.Image,
-      },],
+      },{
+        model : db.User,
+        through : 'Like',
+        as : 'Likers',
+        attributes :['id']
+      }],
       order: [['createdAt', 'DESC']], // 2차원 배열형태로 여러개의 정렬순서가 들어올수 있다. 
     });
     res.json(posts);
