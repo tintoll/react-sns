@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, Icon, Button, Avatar, Form, Input, List, Comment } from "antd";
+import { Card, Icon, Button, Avatar, Form, Input, List, Comment, Popover } from "antd";
 import PropTypes from "prop-types";
 import Link from 'next/link';
 import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST } from "../reducers/post";
@@ -82,7 +82,26 @@ const PostCard = ({ post }) => {
             onClick={onToggleLike}
             />,
           <Icon type="message" key="message" onClick={onToggleComment} />,
-          <Icon type="ellipsis" key="ellipsis" />
+          <Popover
+            key="ellipsis"
+            content={(
+              <Button.Group>
+                {
+                  me && post.UserId === me.id 
+                    ? (
+                      <>
+                        <Button>수정</Button>
+                        <Button type="danger">삭제</Button>
+                      </>
+                    )
+                    : <Button>신고</Button>
+                }
+              </Button.Group>
+            )}
+          >
+            <Icon type="ellipsis" />
+          </Popover>
+          
         ]}
         extra={<Button>팔로우</Button>}
       >
