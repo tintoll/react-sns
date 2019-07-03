@@ -133,15 +133,6 @@ router.post('/login', (req, res, next) => { // POST /api/user/login
   })(req, res, next); // <-- 이부분 까먹지 말고 붙여줘야한다.
 });
 
-router.get('/:id/follow', (req, res) => { // /api/user/:id/follow
-});
-router.post('/:id/follow', (req, res) => {
-});
-router.delete('/:id/follow', (req, res) => {
-});
-
-router.delete('/:id/follower', (req, res) => {
-});
 
 router.get('/:id/posts', async (req, res, next) => {
 
@@ -170,5 +161,34 @@ router.get('/:id/posts', async (req, res, next) => {
   }
 
 });
+
+
+router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.addFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.removeFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 
 module.exports = router;
