@@ -5,7 +5,7 @@ import
   SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE,
   LOGIN_IN_SUCCESS, LOGIN_IN_FAILURE, LOGIN_IN_REQUEST,
   LOG_OUT_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST,
-  LOAD_USER_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_FAILURE, UNFOLLOW_USER_SUCCESS, FOLLOW_USER_REQUEST, FOLLOW_USER_FAILURE, FOLLOW_USER_SUCCESS, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE, LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE, LOAD_FOLLOWINGS_REQUEST,
+  LOAD_USER_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_FAILURE, UNFOLLOW_USER_SUCCESS, FOLLOW_USER_REQUEST, FOLLOW_USER_FAILURE, FOLLOW_USER_SUCCESS, LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE, LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE, LOAD_FOLLOWINGS_REQUEST, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_REQUEST, EDIT_NICKNAME_SUCCESS, EDIT_NICKNAME_FAILURE, EDIT_NICKNAME_REQUEST,
 } from "../reducers/user";
 
 // 설정을 해놓으면 어느곳에서든 axios를 사용하면 기본 URL이 붙어서 호출이 된다. 
@@ -228,6 +228,60 @@ function* watchLoadFollowings() {
   yield takeEvery(LOAD_FOLLOWINGS_REQUEST, loadFollowings);
 }
 
+function removeFollowerAPI(userId) {
+  // 서버에 요청을 보내는 부분
+  return axios.delete(`/user/${userId}/follower`, {
+    withCredentials: true,
+  });
+}
+
+function* removeFollower(action) {
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: REMOVE_FOLLOWER_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchRemoveFollower() {
+  yield takeEvery(REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
+
+
+/////////
+
+function editNicknameAPI(nickname) {
+  // 서버에 요청을 보내는 부분
+  return axios.patch('/user/nickname', { nickname }, {
+    withCredentials: true,
+  });
+}
+function* editNickname(action) {
+  try {
+    const result = yield call(editNicknameAPI, action.data);
+    yield put({ // put은 dispatch 동일
+      type: EDIT_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) { // loginAPI 실패
+    console.error(e);
+    yield put({
+      type: EDIT_NICKNAME_FAILURE,
+      error: e,
+    });
+  }
+}
+function* watchEditNickname() {
+  yield takeEvery(EDIT_NICKNAME_REQUEST, editNickname);
+}
 
 
 export default function* userSaga() {
@@ -240,5 +294,8 @@ export default function* userSaga() {
     fork(watchUnfollow),
     fork(watchLoadFollowings),
     fork(watchLoadFollowers),
+    fork(watchRemoveFollower),
+    fork(watchEditNickname),
+
   ]);
 }

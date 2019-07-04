@@ -220,6 +220,30 @@ router.get('/:id/followers', isLoggedIn, async (req, res, next) => { // /api/use
     next(e);
   }
 });
+router.delete('/:id/follower', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.removeFollower(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
 
-
+router.patch('/nickname', isLoggedIn, async (req, res, next) => {
+  try {
+    await db.User.update({
+      nickname: req.body.nickname,
+    }, {
+        where: { id: req.user.id },
+      });
+    res.send(req.body.nickname);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
 module.exports = router;

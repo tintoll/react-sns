@@ -1,7 +1,7 @@
 import React, {useCallback} from 'react';
 import { Avatar, Card, Button } from 'antd';
 import { useSelector, useDispatch } from "react-redux";
-import { LOGIN_IN_REQUEST } from '../reducers/user';
+import {LOG_OUT_REQUEST } from '../reducers/user';
 
 
 const UserProfile = () => {
@@ -11,7 +11,7 @@ const UserProfile = () => {
 
   const onLogout = useCallback(() => {
     dispatch({
-      type: LOGIN_IN_REQUEST
+      type: LOG_OUT_REQUEST
     });
   }, []);
 
@@ -19,6 +19,9 @@ const UserProfile = () => {
   return (
     <Card
       actions={[
+        <div key="twit">짹짹<br />{me.Posts.length}</div>,
+        <div key="following">팔로잉<br />{me.Followings.length}</div>,
+        <div key="follower">팔로워<br />{me.Followers.length}</div>,
       ]}
     >
       <Card.Meta

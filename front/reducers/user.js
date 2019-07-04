@@ -208,7 +208,15 @@ export default (state=initialState, action) => {
         ...state,
       };
     }
-
+    case ADD_POST_TO_ME: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Posts: [{ id: action.data }, ...state.me.Posts],
+        },
+      };
+    }
     case LOAD_FOLLOWERS_REQUEST: {
       return {
         ...state,
@@ -241,7 +249,51 @@ export default (state=initialState, action) => {
         ...state,
       };
     }
+    case REMOVE_FOLLOWER_REQUEST: {
+      return {
+        ...state,
+      };
+    }
+    case REMOVE_FOLLOWER_SUCCESS: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Followers: state.me.Followers.filter(v => v.id !== action.data),
+        },
+        followerList: state.followerList.filter(v => v.id !== action.data),
+      };
+    }
+    case REMOVE_FOLLOWER_FAILURE: {
+      return {
+        ...state,
+      };
+    }
 
+    case EDIT_NICKNAME_REQUEST: {
+      return {
+        ...state,
+        isEditingNickname: true,
+        editNicknameErrorReason: '',
+      };
+    }
+    case EDIT_NICKNAME_SUCCESS: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        me: {
+          ...state.me,
+          nickname: action.data,
+        },
+      };
+    }
+    case EDIT_NICKNAME_FAILURE: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        editNicknameErrorReason: action.error,
+      };
+    }
 
     default:
       return {
