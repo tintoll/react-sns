@@ -11,17 +11,6 @@ const User = ({ id }) => {
   const { mainPosts } = useSelector(state => state.post);
   const { userInfo } = useSelector(state => state.user);
 
-  useEffect( () => {
-    dispatch({
-      type : LOAD_USER_REQUEST,
-      data : id,
-    });
-    dispatch({
-      type: LOAD_USER_POSTS_REQUEST,
-      data: id,
-    });
-  }, []);
-
   return (
     <div>
       {userInfo
@@ -64,7 +53,17 @@ User.propTypes = {
 }
 
 User.getInitialProps = async (context) => {
-  return { id : parseInt(context.query.id, 10)} ;
+  const id = parseInt(context.query.id, 10);
+  console.log('user getInitialProps', id);
+  context.store.dispatch({
+    type: LOAD_USER_REQUEST,
+    data: id,
+  });
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: id,
+  });
+  return { id };
 }
 
 export default User;
