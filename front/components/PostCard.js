@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Card, Icon, Button, Avatar, Form, Input, List, Comment, Popover } from "antd";
 import PropTypes from "prop-types";
 import Link from 'next/link';
-import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST } from "../reducers/post";
+import { ADD_COMMENT_REQUEST, LOAD_COMMENTS_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST, REMOVE_POST_REQUEST } from "../reducers/post";
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from "../reducers/user";
 import PostImages from './PostImages';
 import PostCardContent from "./PostCardContent";
@@ -95,6 +95,13 @@ const PostCard = ({ post }) => {
     });
   });
 
+  const onRemovePost = useCallback(postId => () => {
+    dispatch({
+      type : REMOVE_POST_REQUEST,
+      data: postId
+    });
+  });
+
   return (
     <div>
       <Card
@@ -119,7 +126,7 @@ const PostCard = ({ post }) => {
                     ? (
                       <>
                         <Button>수정</Button>
-                        <Button type="danger">삭제</Button>
+                        <Button type="danger" onClick={onRemovePost(post.id)}>삭제</Button>
                       </>
                     )
                     : <Button>신고</Button>
