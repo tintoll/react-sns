@@ -37,7 +37,8 @@ router.get('/:tag', async (req, res, next) => {
           model: db.Image,
         }],
       }],
-      order: [['createdAt', 'DESC']]
+      order: [['createdAt', 'DESC']],
+      limit: parseInt(req.query.limit, 10),
     });
 
     return res.json(posts);
