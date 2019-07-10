@@ -31,6 +31,10 @@ app.prepare().then(() => {
     },
   }));
 
+  server.get('/post/:id', (req, res) => {
+    return app.render(req, res, '/post', { id: req.params.id });
+  });
+
   // /hashtag/태그 요청을 express 에서 받아서 next로 넘겨준다. 
   server.get('/hashtag/:tag', (req, res) =>{
     return app.render(req, res, '/hashtag', { tag : req.params.tag});

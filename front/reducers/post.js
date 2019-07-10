@@ -9,6 +9,7 @@ export const initialState = {
   addCommentErrorReason: '',
   commentAdded: false,
   hasMorePost : false,
+  singlePost: null,
 }
 
 
