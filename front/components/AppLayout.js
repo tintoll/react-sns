@@ -6,6 +6,7 @@ import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
 import { useSelector, useDispatch } from "react-redux";
 import {LOAD_USER_REQUEST} from '../reducers/user';
+import Router from "next/router";
 
 const AppLayout = ({ children}) => {
 
@@ -20,6 +21,9 @@ const AppLayout = ({ children}) => {
       })
     }
   }, []);
+  const onSearch = (value) => {
+    Router.push({pathname : '/hashtag', query:{tag:value}}, `/hashtag/${value}`);
+  }
 
   return (
     <div>
@@ -35,7 +39,7 @@ const AppLayout = ({ children}) => {
           </Link>
         </Menu.Item>
         <Menu.Item key="mail">
-          <Input.Search enterButton style={{ verticalAlign: "middle" }} />
+          <Input.Search enterButton style={{ verticalAlign: "middle" }} onSearch={onSearch}/>
         </Menu.Item>
       </Menu>
       
